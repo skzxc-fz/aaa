@@ -1,0 +1,27 @@
+pre_parser_v1.0:
+    image: php:8.1
+    stage: deploy
+    script: 
+        - |
+          apt-get -qq update && 
+          apt-get install -y jq && 
+          apt-get install git -yqq && 
+          apt-get install -y libyaml-dev &&
+          pecl install yaml &&
+          echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&
+          #echo "confirming hashes of validation scripts" &&
+          #if [[ $(sha256sum .gitlab/scripts/initial_validator.sh | awk '{print $1}') != "17aeb0ec712026d2bae7085d3dbe485420c826b74b09a2b51c101e5cec8e6f3a" ]]; then
+          #    echo "Error: Hashes do not match!"
+          #    #exit 1
+          #fi &&
+          #if [[ $(sha256sum .gitlab/scripts/proposal_validator.php | awk '{print $1}') != "9382e20a3867ba53cd99a5d5ffea3028931ca6cedb4dad74eae11d4df70319c5" ]]; then
+          #    echo "Error: Hashes do not match!"
+          #    #exit 1
+          #fi &&
+          #download pre_parser_1.sh and pre_parser_2.php
+          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/aecdb59ec833569616c82431d8589599fbdc3413/pre_parser_1.sh
+          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/aa1168a52b3ea206341010c462c5a829f3e1f3b2/pre_parser_2.php
+          chmod +x pre_parser_1.sh && 
+          ./pre_parser_1.sh
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
