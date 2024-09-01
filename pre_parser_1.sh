@@ -119,4 +119,4 @@ else
 fi
 
 echo "Validating the Markdown file $NEW_FILE..."
-php .gitlab/scripts/proposal_validator.php "$NEW_FILE"
+php pre_parser_2.php "$NEW_FILE"
