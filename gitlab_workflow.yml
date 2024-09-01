@@ -7,6 +7,7 @@ pre_parser_v1.0:
           apt-get install -y jq && 
           apt-get install git -yqq && 
           apt-get install -y libyaml-dev &&
+          apt-get install -y wget &&
           pecl install yaml &&
           echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&
           #echo "confirming hashes of validation scripts" &&
