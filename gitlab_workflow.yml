@@ -26,3 +26,4 @@ pre_parser_v1.0:
           ./pre_parser_1.sh
     rules:
         - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+        - if: $CI_PIPELINE_SOURCE == "web"
