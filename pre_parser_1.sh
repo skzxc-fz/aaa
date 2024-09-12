@@ -2,11 +2,16 @@
 
 set -e
 
-# Function to strip YAML front matter and pre-process for diffs
+# Function to convert file to Unix line endings
+convert_to_unix() {
+  sed 's/\r$//' "$1"
+}
+
+# Function to strip YAML front matter and preprocess for diffs
 strip_yaml_front_matter_and_preprocess() {
   awk '
   BEGIN { in_yaml=0 }
-  /^---\r?$/ {
+  /^---$/ {
     if (in_yaml == 0) {
       in_yaml=1
     } else {
@@ -21,7 +26,7 @@ strip_yaml_front_matter_and_preprocess() {
 has_yaml_front_matter() {
   awk '
   BEGIN { yaml_start=0; yaml_end=0 }
-  /^---\r?$/ {
+  /^---$/ {
     if (!yaml_start) { 
       yaml_start=1 
     } else { 
@@ -30,7 +35,6 @@ has_yaml_front_matter() {
   }
   END { exit !(yaml_start && yaml_end) }' "$1"
 }
-
 
 echo "Fetching merge request description from GitLab API..."
 MR_DESCRIPTION=$(curl -s --fail "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID" | jq -r '.description')
@@ -92,7 +96,8 @@ if ! has_yaml_front_matter "$NEW_FILE"; then
   exit 1
 fi
 
-FILE_CONTENT=$(cat "$NEW_FILE" | strip_yaml_front_matter_and_preprocess)
+# Convert to Unix line endings before processing
+FILE_CONTENT=$(convert_to_unix "$NEW_FILE" | strip_yaml_front_matter_and_preprocess)
 echo "Content of the Markdown file $NEW_FILE (after stripping YAML front matter):"
 echo "$FILE_CONTENT"
 
@@ -106,13 +111,13 @@ echo "$FILE_CONTENT" > "$FILE_CONTENT_FILE"
 
 # Use git diff to compare the files
 set +e
-DIFF_OUTPUT=$(git diff --no-index --color=always --word-diff=plain --color-moved --ignore-space-change  "$MR_DESCRIPTION_FILE" "$FILE_CONTENT_FILE")
+DIFF_OUTPUT=$(git diff --no-index --color=always --word-diff=plain --color-moved --ignore-space-change "$MR_DESCRIPTION_FILE" "$FILE_CONTENT_FILE")
 set -e
 
 # Check if there are differences
 if [ -n "$DIFF_OUTPUT" ]; then
   echo "Error: The merge request description does not match the content of the Markdown file $NEW_FILE."
-  git diff --no-index --color=always --word-diff=plain --color-moved --ignore-space-change  "$MR_DESCRIPTION_FILE" "$FILE_CONTENT_FILE"  
+  git diff --no-index --color=always --word-diff=plain --color-moved --ignore-space-change "$MR_DESCRIPTION_FILE" "$FILE_CONTENT_FILE"
   exit 1
 else
   echo "The merge request description matches the content of the Markdown file."
