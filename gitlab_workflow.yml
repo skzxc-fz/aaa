@@ -20,7 +20,7 @@ pre_parser_v1.1.6:
           #    #exit 1
           #fi &&
           #download pre_parser_1.sh and pre_parser_2.php
-          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/e48832bfaaf000e254dd1061c2e609db7b27a7fc/pre_parser_1.sh
+          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh
           wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/aa1168a52b3ea206341010c462c5a829f3e1f3b2/pre_parser_2.php
           chmod +x pre_parser_1.sh && 
           ./pre_parser_1.sh
