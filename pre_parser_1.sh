@@ -6,7 +6,7 @@ set -e
 strip_yaml_front_matter_and_preprocess() {
   awk '
   BEGIN { in_yaml=0 }
-  /^---$/ {
+  /^\r?---\r?$/ {
     if (in_yaml == 0) {
       in_yaml=1
     } else {
@@ -17,21 +17,20 @@ strip_yaml_front_matter_and_preprocess() {
   !in_yaml { print }' | awk 'NF' | tr -s ' '
 }
 
-
 # Function to check for YAML front matter
 has_yaml_front_matter() {
   awk '
-  BEGIN { yaml_start=0; yaml_end=0 } 
-  /^---$/ { 
+  BEGIN { yaml_start=0; yaml_end=0 }
+  /^\r?---\r?$/ { 
     if (!yaml_start) { 
       yaml_start=1 
     } else { 
       yaml_end=1 
     } 
   }
-  { print } # Print each line of the file
   END { exit !(yaml_start && yaml_end) }' "$1"
 }
+
 
 echo "Fetching merge request description from GitLab API..."
 MR_DESCRIPTION=$(curl -s --fail "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID" | jq -r '.description')
