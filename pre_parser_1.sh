@@ -6,7 +6,7 @@ set -e
 strip_yaml_front_matter_and_preprocess() {
   awk '
   BEGIN { in_yaml=0 }
-  /^\r?---\r?$/ {
+  ^---\r?$/ {
     if (in_yaml == 0) {
       in_yaml=1
     } else {
@@ -21,7 +21,7 @@ strip_yaml_front_matter_and_preprocess() {
 has_yaml_front_matter() {
   awk '
   BEGIN { yaml_start=0; yaml_end=0 }
-  /^\r?---\r?$/ { 
+  ^---\r?$ { 
     if (!yaml_start) { 
       yaml_start=1 
     } else { 
