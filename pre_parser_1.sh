@@ -2,6 +2,13 @@
 
 set -e
 
+# Function to check for Windows-style line endings and issue a warning
+warn_if_windows_line_endings() {
+  if grep -q $'\r' "$1"; then
+    echo "Warning: The file $1 contains Windows-style line endings (CRLF)."
+  fi
+}
+
 # Function to convert file to Unix line endings
 convert_to_unix() {
   sed 's/\r$//' "$1"
@@ -89,6 +96,8 @@ if [[ "$NEW_FILE" != *.md ]]; then
   echo "$NEW_FILE file is not a Markdown (.md) file."
   exit 1
 fi
+
+warn_if_windows_line_endings "$NEW_FILE"
 
 echo "Checking if the Markdown file $NEW_FILE contains YAML front matter..."
 if ! has_yaml_front_matter "$NEW_FILE"; then
