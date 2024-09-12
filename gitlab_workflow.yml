@@ -1,4 +1,4 @@
-pre_parser_v1.1.6:
+pre_parser_v1.1.7:
     image: php:8.1
     stage: deploy
     script: 
