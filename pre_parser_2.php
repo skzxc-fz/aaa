@@ -32,7 +32,7 @@ function checkYamlForSpaces($yamlContent)
 
 function getAmountFromText($filename)
 {
-    $fileContents = file_get_contents($filename);
+    $fileContents = shell_exec("sed 's/\r//' '$filename'");
     $lines = explode("\n", $fileContents);
 
     // Check if the first line is '---'
