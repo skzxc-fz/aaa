@@ -28,7 +28,8 @@ has_yaml_front_matter() {
     } else { 
       yaml_end=1 
     } 
-  } 
+  }
+  { print } # Print each line of the file
   END { exit !(yaml_start && yaml_end) }' "$1"
 }
 
