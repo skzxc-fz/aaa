@@ -100,7 +100,7 @@ fi
 warn_if_windows_line_endings "$NEW_FILE"
 
 echo "Checking if the Markdown file $NEW_FILE contains YAML front matter..."
-if ! has_yaml_front_matter <(convert_to_unix "$1"); then
+if ! has_yaml_front_matter <(convert_to_unix "$NEW_FILE"); then
   echo "Error: The Markdown file $NEW_FILE does not contain YAML front matter."
   exit 1
 fi
