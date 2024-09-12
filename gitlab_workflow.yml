@@ -1,4 +1,4 @@
-pre_parser_v1.1.1:
+pre_parser_v1.1.2:
     image: php:8.1
     stage: deploy
     script: 
@@ -20,7 +20,7 @@ pre_parser_v1.1.1:
           #    #exit 1
           #fi &&
           #download pre_parser_1.sh and pre_parser_2.php
-          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/aecdb59ec833569616c82431d8589599fbdc3413/pre_parser_1.sh
+          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/d0f48259d675c715def694e7ac9b7db3e7684a08/pre_parser_1.sh
           wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/aa1168a52b3ea206341010c462c5a829f3e1f3b2/pre_parser_2.php
           chmod +x pre_parser_1.sh && 
           ./pre_parser_1.sh
