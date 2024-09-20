@@ -114,7 +114,12 @@ function validateProposal($filename)
     // Perform the same tasks on the yaml values as the ccs-backend script 
     $amount = floatval(str_replace(",", ".", $values['amount']));
     $author = htmlspecialchars($values['author'], ENT_QUOTES);
-    $date = strtotime($values['date']);
+    // Check date format is "Month day, year" e.g. "Janurary 1, 2024"
+    $dateObj = DateTime::createFromFormat('F j, Y', $values['date']);
+    if (!$dateObj || $dateObj->format('F j, Y') !== $values['date']) {
+        throw new Exception("Invalid date format. Use 'Month day, year' (e.g. 'January 23, 2024')");
+    }
+    $date = $values['date'];
     $state = $layoutToState[$values['layout']];
     $milestones = $values['milestones'];
     $title = htmlspecialchars($values['title'], ENT_QUOTES);
@@ -126,7 +131,7 @@ function validateProposal($filename)
     echo "Processed values:\n";
     echo "Amount: $amount\n";
     echo "Author: $author\n";
-    echo "Date: " . date('Y-m-d', $date) . "\n";
+    echo "Date: " . date('F j, Y', $date) . "\n";
     echo "State: $state\n";
     echo "Title: $title\n";
     echo "Milestones: \n";
