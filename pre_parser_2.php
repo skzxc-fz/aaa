@@ -119,7 +119,7 @@ function validateProposal($filename)
     if (!$dateObj || $dateObj->format('F j, Y') !== $values['date']) {
         throw new Exception("Invalid date format. Use 'Month day, year' (e.g. 'January 23, 2024')");
     }
-    $date = $values['date'];
+    $date = strtotime($values['date']);
     $state = $layoutToState[$values['layout']];
     $milestones = $values['milestones'];
     $title = htmlspecialchars($values['title'], ENT_QUOTES);
