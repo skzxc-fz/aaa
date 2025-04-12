@@ -1,26 +1,27 @@
 pre_parser_v1.1.9.1:
-  image: php:8.1
-  executor: docker  # 显式指定 docker executor（默认可能已为 docker）
-  stage: deploy
-  script: 
-    - apt-get update -y &&  # 在 Docker 镜像中，默认以 root 运行，无需 sudo
-      apt-get install -y jq git libyaml-dev wget php-dev &&
-      pecl install yaml &&
-      echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&
-      
-      # 下载脚本文件（普通用户权限，容器内路径为 /builds/...）
-      wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh &&
-      wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/a240380a096ddd558bfc365506d8529299fb03f3/pre_parser_2.php &&
-      
-      # 检查文件是否存在
-      if [ ! -f "pre_parser_1.sh" ]; then
-        echo "Error: pre_parser_1.sh 未下载成功"
-        exit 1
-      fi &&
-      
-      # 赋予执行权限并运行（无需 sudo，文件在当前目录）
-      chmod +x pre_parser_1.sh &&
-      ./pre_parser_1.sh  # 直接运行，路径正确时无需 sudo
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_PIPELINE_SOURCE == "web"
+    image: php:8.1
+    stage: deploy
+    script: 
+        - |
+          # 以 root 权限更新软件包列表
+          sudo apt-get -qq update
+          # 安装所需的软件包
+          sudo apt-get install -y jq git libyaml-dev wget php-dev
+          # 安装 yaml 扩展
+          pecl install yaml
+          # 添加 yaml 扩展配置
+          echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini
+          # 下载 pre_parser_1.sh 和 pre_parser_2.php
+          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh
+          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/a240380a096ddd558bfc365506d8529299fb03f3/pre_parser_2.php
+          # 检查 pre_parser_1.sh 文件是否存在
+          if [ -f "pre_parser_1.sh" ]; then
+              chmod +x pre_parser_1.sh
+              sh pre_parser_1.sh
+          else
+              echo "pre_parser_1.sh 文件未找到，作业失败。"
+              exit 1
+          fi
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+        - if: $CI_PIPELINE_SOURCE == "web"
