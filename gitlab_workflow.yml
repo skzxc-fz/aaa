@@ -1,30 +1,29 @@
 pre_parser_v1.1.9.1:
-    image: php:8.1
-    stage: deploy
-    script: 
-        - |
-          apt-get -qq update && 
-          apt-get install -y jq && 
-          apt-get install git -yqq && 
-          apt-get install -y libyaml-dev &&
-          apt-get install -y wget &&
-          pecl install yaml &&
-          sudo echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&
-          #echo "confirming hashes of validation scripts" &&
-          #if [[ $(sha256sum .gitlab/scripts/initial_validator.sh | awk '{print $1}') != "17aeb0ec712026d2bae7085d3dbe485420c826b74b09a2b51c101e5cec8e6f3a" ]]; then
-          #    echo "Error: Hashes do not match!"
-          #    #exit 1
-          #fi &&
-          #if [[ $(sha256sum .gitlab/scripts/proposal_validator.php | awk '{print $1}') != "9382e20a3867ba53cd99a5d5ffea3028931ca6cedb4dad74eae11d4df70319c5" ]]; then
-          #    echo "Error: Hashes do not match!"
-          #    #exit 1
-          #fi &&
-          #download pre_parser_1.sh and pre_parser_2.php
-          sudo wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/a240380a096ddd558bfc365506d8529299fb03f3/pre_parser_2.php
-          sudo wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh
-          
-          sudo chmod +x pre_parser_1.sh 
-          sudo sh pre_parser_1.sh
-    rules:
-        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-        - if: $CI_PIPELINE_SOURCE == "web"
+  image: php:8.1
+  stage: deploy
+  script: 
+    - |
+      # 更新软件源并安装依赖
+      apt-get update -y &&
+      apt-get install -y jq git libyaml-dev wget php-dev &&  # 新增 php-dev
+      
+      # 安装 YAML 扩展（需 php-dev 支持）
+      pecl install yaml &&
+      echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&  # 无需 sudo，容器内默认 root
+      
+      # 下载脚本文件（普通用户权限，容器内路径为 /builds/...）
+      wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh &&
+      wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/a240380a096ddd558bfc365506d8529299fb03f3/pre_parser_2.php &&
+      
+      # 检查文件是否存在
+      if [ ! -f "pre_parser_1.sh" ]; then
+        echo "Error: pre_parser_1.sh 未下载成功"
+        exit 1
+      fi &&
+      
+      # 赋予执行权限并运行（无需 sudo，文件在当前目录）
+      chmod +x pre_parser_1.sh &&
+      ./pre_parser_1.sh  # 直接运行，路径正确时无需 sudo
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
