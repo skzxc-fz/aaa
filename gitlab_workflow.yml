@@ -9,7 +9,7 @@ pre_parser_v1.1.9.1:
           apt-get install -y libyaml-dev &&
           apt-get install -y wget &&
           pecl install yaml &&
-          echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&
+          sudo echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&
           #echo "confirming hashes of validation scripts" &&
           #if [[ $(sha256sum .gitlab/scripts/initial_validator.sh | awk '{print $1}') != "17aeb0ec712026d2bae7085d3dbe485420c826b74b09a2b51c101e5cec8e6f3a" ]]; then
           #    echo "Error: Hashes do not match!"
@@ -20,11 +20,11 @@ pre_parser_v1.1.9.1:
           #    #exit 1
           #fi &&
           #download pre_parser_1.sh and pre_parser_2.php
-          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh
-          &&
-          wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/a240380a096ddd558bfc365506d8529299fb03f3/pre_parser_2.php
-          chmod +x pre_parser_1.sh 
-          sh pre_parser_1.sh
+          sudo wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/a240380a096ddd558bfc365506d8529299fb03f3/pre_parser_2.php
+          sudo wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh
+          
+          sudo chmod +x pre_parser_1.sh 
+          sudo sh pre_parser_1.sh
     rules:
         - if: $CI_PIPELINE_SOURCE == "merge_request_event"
         - if: $CI_PIPELINE_SOURCE == "web"
