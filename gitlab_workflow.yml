@@ -23,7 +23,7 @@ pre_parser_v1.1.9.1:
           wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh
           wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/a240380a096ddd558bfc365506d8529299fb03f3/pre_parser_2.php
           chmod +x pre_parser_1.sh && 
-          ./pre_parser_1.sh
+          sh pre_parser_1.sh
     rules:
         - if: $CI_PIPELINE_SOURCE == "merge_request_event"
         - if: $CI_PIPELINE_SOURCE == "web"
