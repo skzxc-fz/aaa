@@ -1,15 +1,12 @@
 pre_parser_v1.1.9.1:
   image: php:8.1
+  executor: docker  # 显式指定 docker executor（默认可能已为 docker）
   stage: deploy
   script: 
-    - |
-      # 更新软件源并安装依赖
-      apt-get update -y &&
-      apt-get install -y jq git libyaml-dev wget php-dev &&  # 新增 php-dev
-      
-      # 安装 YAML 扩展（需 php-dev 支持）
+    - apt-get update -y &&  # 在 Docker 镜像中，默认以 root 运行，无需 sudo
+      apt-get install -y jq git libyaml-dev wget php-dev &&
       pecl install yaml &&
-      echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&  # 无需 sudo，容器内默认 root
+      echo "extension=yaml.so" > /usr/local/etc/php/conf.d/add-yaml-ext.ini &&
       
       # 下载脚本文件（普通用户权限，容器内路径为 /builds/...）
       wget https://raw.githubusercontent.com/plowsof/ccs-proposal-pre-parser/3f2f73ba05a020f0c94c2b37c3f4e8050de58586/pre_parser_1.sh &&
